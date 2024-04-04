@@ -31,13 +31,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'ai_chat.apps.AiChatConfig',
+    'daphne',
+    'channels',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ai_chat.apps.AiChatConfig'
 ]
 
 MIDDLEWARE = [
@@ -122,3 +125,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Daphne
+ASGI_APPLICATION = "travelline_ai_support.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+        }
+    }
