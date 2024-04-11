@@ -1,4 +1,5 @@
 import json
+import time
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatRoomConsumer(AsyncWebsocketConsumer):
@@ -9,6 +10,16 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.group_name, self.channel_name)
 
         await self.accept()
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "from_ai": True,
+                "type": "chatbox_message",
+                "message": "Welcome to Travelline AI Support Service. Please, ask your question!",
+                "username": "Travelline AI Supporter",
+            },
+        )
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
@@ -21,21 +32,34 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.group_name,
             {
+                "from_ai": False,
                 "type": "chatbox_message",
                 "message": message,
                 "username": username,
+            },
+        )
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "from_ai": True,
+                "type": "chatbox_message",
+                "message": "Ты лох",
+                "username": "Travelline AI Supporter",
             },
         )
     # Receive message from room group.
     async def chatbox_message(self, event):
         message = event["message"]
         username = event["username"]
+        from_ai = event["from_ai"]
         #send message and username of sender to websocket
         await self.send(
             text_data=json.dumps(
                 {
                     "message": message,
                     "username": username,
+                    "from_ai": from_ai,
                 }
             )
         )

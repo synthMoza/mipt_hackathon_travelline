@@ -1,27 +1,170 @@
-<!-- chat/templates/chat/index.html -->
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Chat Rooms</title>
-</head>
-<body>
-    What chat room would you like to enter?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter">
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
 
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
+    <title>white chat - Bootdey.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      body {
+        margin-top: 20px;
+      }
 
-        document.querySelector('#room-name-submit').onclick = function(e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = '/' + roomName + '/';
-        };
+      .chat-online {
+        color: #34ce57;
+      }
+
+      .chat-offline {
+        color: #e4606d;
+      }
+
+      .chat-messages {
+        display: flex;
+        flex-direction: column;
+        min-height: 800px;
+        max-height: 800px;
+        overflow-y: scroll;
+      }
+
+      .chat-message-left,
+      .chat-message-right {
+        display: flex;
+        flex-shrink: 0;
+      }
+
+      .chat-message-left {
+        margin-right: auto;
+      }
+
+      .chat-message-right {
+        flex-direction: row-reverse;
+        margin-left: auto;
+      }
+      .py-3 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+      }
+      .px-4 {
+        padding-right: 1.5rem !important;
+        padding-left: 1.5rem !important;
+      }
+      .flex-grow-0 {
+        flex-grow: 0 !important;
+      }
+      .border-top {
+        border-top: 1px solid #dee2e6 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="content">
+      <div class="container p-0">
+        <div class="card">
+          <div class="row g-0">
+            <div class="col-12 col-lg-7 col-xl-9">
+              <div class="position-relative">
+                <div class="chat-messages p-4" id="chat-text">
+                </div>
+              </div>
+              <div class="flex-grow-0 py-3 px-4 border-top">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="input"
+                    placeholder="Type your message"
+                  />
+                  <button class="btn btn-primary" id="submit">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    {% comment %} Get data for username and chatbox name{% endcomment %}
+    {{ request.user.username|json_script:"user_username" }}
+    {{ chat_box_name|json_script:"room-name" }}
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+      const user_username = JSON.parse(
+        document.getElementById("user_username").textContent
+      );
+      document.querySelector("#submit").onclick = function (e) {
+        const messageInputDom = document.querySelector("#input");
+        const message = messageInputDom.value;
+        chatSocket.send(
+          JSON.stringify({
+            message: message,
+            username: user_username,
+            from_ai: false,
+          })
+        );
+        messageInputDom.value = "";
+      };
+
+      const boxName = JSON.parse(
+        document.getElementById("room-name").textContent
+      );
+      // Create a WebSocket in JavaScript.
+      const chatSocket = new WebSocket(
+        "ws://" + window.location.host + "/ws/" + boxName + "/"
+      );
+
+      chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+
+        let g = document.createElement('div');
+        if (data.from_ai)
+            g.className = "chat-message-left pb-4";
+        else
+            g.className = "chat-message-right pb-4";
+        
+        let avatar = document.createElement('div');
+        let avatar_img = document.createElement('img');
+        avatar_img.className = "rounded-circle mr-1";
+        if (data.from_ai)
+            avatar_img.setAttribute("src", "https://bootdey.com/img/Content/avatar/avatar1.png");
+        else
+            avatar_img.setAttribute("src", "https://bootdey.com/img/Content/avatar/avatar3.png");
+        avatar_img.setAttribute("alt", "AI");
+        avatar_img.setAttribute("width", 40);
+        avatar_img.setAttribute("height", 40);
+
+        avatar_time = document.createElement('div')
+        avatar_time.className = "text-muted small text-nowrap mt-2";
+
+        //avatar_time_text = document.createTextNode("lol kek");
+        //avatar_time.appendChild(avatar_time_text);
+
+        avatar.appendChild(avatar_img);
+        avatar.appendChild(avatar_time);
+
+        g.appendChild(avatar);
+
+        let message = document.createElement('div');
+        message.className = "flex-shrink-1 bg-light rounded py-2 px-3 mr-3";
+        let message_name = document.createElement('div');
+        message_name.className = "font-weight-bold mb-1";
+        let message_name_text = document.createTextNode(data.username);
+        message_name.appendChild(message_name_text);
+        let message_text = document.createTextNode(data.message);
+
+        message.appendChild(message_name);
+        message.appendChild(message_text);
+
+        g.appendChild(message);
+
+        let main_text = document.createElement('div');
+        const query = document.querySelector("#chat-text");
+        query.appendChild(g);
+        query.scrollTop = query.scrollHeight;
+      };
     </script>
-</body>
+  </body>
 </html>
