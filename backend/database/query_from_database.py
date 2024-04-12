@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+@author - Zaitsev Vasilii, 2024
+
+"""
+
 import os
 import sys
 
@@ -7,6 +12,7 @@ sys.path.append("../rag")
 
 import numpy as np
 import torch
+import time
 import argparse
 from sklearn.metrics.pairwise import cosine_similarity
 from sbertembedding import SBertEmbedding
@@ -14,7 +20,7 @@ from pathlib import Path
 from typing import List, Tuple, Dict
 
 EMBEDDING_DIR = "embeddings"
-QUERY = "Как поставить цены в тарифе"
+NUMBER_OF_SIMILAR_FILES = 5
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Returns most similar file to the passed query')
@@ -46,24 +52,37 @@ def embed_query(query : str) -> torch.Tensor:
 
 def main() -> None:
 
-    args = parse_args()
+    #args = parse_args()
     (tensor_list, dict_with_indexes) = load_tensors(EMBEDDING_DIR)
     tensors = np.vstack(tensor_list)
-    cos_similarities = cosine_similarity(tensors)
 
-    emb_query = embed_query(args.query)
-    print(f"User query: {args.query}")
-    query_similarities = cosine_similarity([emb_query[0]], tensors)[0]
 
-    #most_similar_index = np.argmax(query_similarities)
-    similarity_list = []
-    for index in range(len(dict_with_indexes)):
-        similarity_list.append((dict_with_indexes[index], query_similarities[index]))
+    print("Database loaded")
 
-    similarity_list.sort(key=lambda x: x[1], reverse=True)
-    print(similarity_list)
+    while(True):
 
-    #print(f"Most_simular_file = #{dict_with_indexes[most_similar_index]}#")
+        print("")
+        print("*******************")
+        print("Please input your query")
+        #user_query = args.query
+        user_query = input()
+
+        #start_time = time.time()
+        emb_query =  torch.nn.functional.normalize(embed_query(user_query))
+        #print(f"Time: {time.time() - start_time}")
+        #print(f"User query: {user_query}")
+        query_similarities = cosine_similarity([emb_query[0]], tensors)[0]
+
+        #most_similar_index = np.argmax(query_similarities)
+        similarity_list = []
+        for index in range(len(dict_with_indexes)):
+            similarity_list.append((dict_with_indexes[index], query_similarities[index]))
+
+        similarity_list.sort(key=lambda x: x[1], reverse=True)
+        print(f"Similarity list = {similarity_list}")
+        tmp_num = NUMBER_OF_SIMILAR_FILES
+        print(f"Top {tmp_num} similar files: {[x[0] for x in similarity_list[:tmp_num]]}")
+        print("********************")
 
 
 if __name__ == "__main__":

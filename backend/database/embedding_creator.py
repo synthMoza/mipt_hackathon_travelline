@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-@author - Zaitsev Vasilii
+@author - Zaitsev Vasilii, 2024
 
 """
 

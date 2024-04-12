@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 """
+@author - Zaitsev Vasilii, 2024
 please use:
 pip install pypandoc
 pip install pypandoc_binary
