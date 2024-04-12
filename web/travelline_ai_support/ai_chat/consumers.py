@@ -1,5 +1,5 @@
 import json
-import time
+import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 class ChatRoomConsumer(AsyncWebsocketConsumer):
@@ -38,16 +38,6 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                 "username": username,
             },
         )
-
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "from_ai": True,
-                "type": "chatbox_message",
-                "message": "Ты лох",
-                "username": "Travelline AI Supporter",
-            },
-        )
     # Receive message from room group.
     async def chatbox_message(self, event):
         message = event["message"]
@@ -63,5 +53,16 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                 }
             )
         )
+        if not from_ai:
+            await asyncio.sleep(0.5)
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "message": "message",
+                        "username": "Travelline AI Supporter",
+                        "from_ai": True,
+                    }
+                )
+            )
 
     pass

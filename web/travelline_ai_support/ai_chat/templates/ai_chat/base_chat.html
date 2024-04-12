@@ -14,28 +14,28 @@
         margin-top: 20px;
       }
 
-      .chat-online {
-        color: #34ce57;
-      }
-
-      .chat-offline {
-        color: #e4606d;
-      }
-
       .chat-messages {
         display: flex;
         flex-direction: column;
-        min-height: 800px;
-        max-height: 800px;
-        overflow-y: scroll;
+        height: 80vh;
+        overflow-y: hidden;
+        overflow-x: hidden;
       }
+      .chat-messages:focus,
+      .chat-messages:hover {
+        overflow-y: scroll;
+        scrollbar-width: none;
+      }
+
 
       .chat-message-left,
       .chat-message-right {
         display: flex;
         flex-shrink: 0;
       }
-
+      .chat-message-wrap {
+        overflow-wrap: anywhere;
+      }
       .chat-message-left {
         margin-right: auto;
       }
@@ -55,29 +55,43 @@
       .flex-grow-0 {
         flex-grow: 0 !important;
       }
-      .border-top {
+      .border-top {   
         border-top: 1px solid #dee2e6 !important;
+      }
+      .input-group {
+        overflow-wrap: anywhere;
+        height: 10vh;
+        min-height: 50px;
+      }
+
+      textarea {
+        resize: none;
+      }
+      
+      .text-center {
+        text-align: center
       }
     </style>
   </head>
   <body>
     <main class="content">
       <div class="container p-0">
-        <div class="card">
+        <div>
           <div class="row g-0">
-            <div class="col-12 col-lg-7 col-xl-9">
+            <div class="col-12 col-lg-7 col-xl-12">
               <div class="position-relative">
                 <div class="chat-messages p-4" id="chat-text">
                 </div>
               </div>
               <div class="flex-grow-0 py-3 px-4 border-top">
                 <div class="input-group">
-                  <input
+                  <textarea
                     type="text"
                     class="form-control"
                     id="input"
-                    placeholder="Type your message"
-                  />
+                    placeholder="Type your question"
+                    style="overflow:hidden"
+                  ></textarea>
                   <button class="btn btn-primary" id="submit">Send</button>
                 </div>
               </div>
@@ -98,13 +112,15 @@
       document.querySelector("#submit").onclick = function (e) {
         const messageInputDom = document.querySelector("#input");
         const message = messageInputDom.value;
-        chatSocket.send(
-          JSON.stringify({
-            message: message,
-            username: user_username,
-            from_ai: false,
-          })
-        );
+        if (message != "") {
+          chatSocket.send(
+            JSON.stringify({
+              message: message,
+              username: user_username,
+              from_ai: false,
+            })
+          );
+        }
         messageInputDom.value = "";
       };
 
@@ -129,26 +145,36 @@
         let avatar_img = document.createElement('img');
         avatar_img.className = "rounded-circle mr-1";
         if (data.from_ai)
-            avatar_img.setAttribute("src", "https://bootdey.com/img/Content/avatar/avatar1.png");
+            avatar_img.setAttribute("src", "https://www.svgrepo.com/show/242153/operator-user.svg");
         else
-            avatar_img.setAttribute("src", "https://bootdey.com/img/Content/avatar/avatar3.png");
+            avatar_img.setAttribute("src", "https://www.svgrepo.com/show/452030/avatar-default.svg");
         avatar_img.setAttribute("alt", "AI");
         avatar_img.setAttribute("width", 40);
         avatar_img.setAttribute("height", 40);
 
         avatar_time = document.createElement('div')
-        avatar_time.className = "text-muted small text-nowrap mt-2";
+        avatar_time.className = "text-muted small text-nowrap mr-1 mt-1 text-center";
 
-        //avatar_time_text = document.createTextNode("lol kek");
-        //avatar_time.appendChild(avatar_time_text);
+        let currentdate = new Date(); 
+        let minutes = currentdate.getMinutes().toString();
+        let hours = currentdate.getHours().toString();
+        if (minutes.length == 1)
+          minutes = '0' + minutes;
+        if (hours.length == 1)
+          hours = '0' + hours;
+        avatar_time_text = document.createTextNode(hours + ":" + minutes);
+        avatar_time.appendChild(avatar_time_text);
 
         avatar.appendChild(avatar_img);
         avatar.appendChild(avatar_time);
 
         g.appendChild(avatar);
 
-        let message = document.createElement('div');
-        message.className = "flex-shrink-1 bg-light rounded py-2 px-3 mr-3";
+        let message = document.createElement('span');
+        if (data.from_ai)
+          message.className = "flex-shrink-1 bg-info rounded py-2 px-3 mr-3 chat-message-wrap";
+        else
+          message.className = "flex-shrink-1 bg-light rounded py-2 px-3 mr-3 chat-message-wrap";
         let message_name = document.createElement('div');
         message_name.className = "font-weight-bold mb-1";
         let message_name_text = document.createTextNode(data.username);
@@ -160,7 +186,6 @@
 
         g.appendChild(message);
 
-        let main_text = document.createElement('div');
         const query = document.querySelector("#chat-text");
         query.appendChild(g);
         query.scrollTop = query.scrollHeight;
