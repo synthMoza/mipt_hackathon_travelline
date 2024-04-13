@@ -1,0 +1,17 @@
+[project]
+name = "travelline"
+version = "0.1.0"
+authors = [
+  { name = "Stanislav Sidelnikov", email = "sidelnikov.si.001@gmail.com" },
+  { name = "Alexey Eganyan", email = "synthmoza@frtk.ru" },
+  { name = "Eugene Zorin", email = None },
+  { name = "Vasilii Zaytsev" email = None}
+]
+description = "MIPT python hackathon project"
+requires-python = "==3.12"
+
+[tool.black]
+line-length = 120
+
+[tool.pylint]
+fail-under = 2
