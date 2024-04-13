@@ -15,3 +15,8 @@ line-length = 120
 
 [tool.pylint]
 fail-under = 2
+disable = """
+  missing-module-docstring,
+  missing-class-docstring,
+  missing-function-docstring
+"""

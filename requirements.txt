@@ -1,2 +1,3 @@
 --editable ./
 django
+pylint
