@@ -2,6 +2,7 @@ import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+
 class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.chat_box_name = self.scope["url_route"]["kwargs"]["chat_box_name"]
@@ -23,6 +24,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
     # This function receive messages from WebSocket.
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -38,12 +40,13 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                 "username": username,
             },
         )
+
     # Receive message from room group.
     async def chatbox_message(self, event):
         message = event["message"]
         username = event["username"]
         from_ai = event["from_ai"]
-        #send message and username of sender to websocket
+        # send message and username of sender to websocket
         await self.send(
             text_data=json.dumps(
                 {

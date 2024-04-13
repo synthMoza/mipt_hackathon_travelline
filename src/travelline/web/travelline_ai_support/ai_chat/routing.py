@@ -7,12 +7,8 @@ websocket_urlpatterns = [
     re_path(r"ws/(?P<chat_box_name>\w+)/$", consumers.ChatRoomConsumer.as_asgi()),
 ]
 
-application = ProtocolTypeRouter( 
+application = ProtocolTypeRouter(
     {
-        "websocket": AuthMiddlewareStack(
-            URLRouter(
-               websocket_urlpatterns
-            )
-        ),
+        "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
     }
 )

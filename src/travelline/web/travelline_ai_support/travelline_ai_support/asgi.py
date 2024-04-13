@@ -16,15 +16,13 @@ from django.core.asgi import get_asgi_application
 
 import ai_chat.routing
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'travelline_ai_support.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "travelline_ai_support.settings")
 
 django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        "websocket": AllowedHostsOriginValidator(
-            AuthMiddlewareStack(URLRouter(ai_chat.routing.websocket_urlpatterns))
-        ),
+        "websocket": AllowedHostsOriginValidator(AuthMiddlewareStack(URLRouter(ai_chat.routing.websocket_urlpatterns))),
     }
 )
