@@ -38,5 +38,4 @@ jobs:
         ./lint.sh
     - name: Test web server launch
       run: |
-        python3 src/travelline/web/travelline_ai_support/manage.py runserver
-        pkill runserver
+        python3 src/travelline/web/travelline_ai_support/manage.py runserver &
