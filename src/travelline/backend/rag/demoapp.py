@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from sbertembedding import SBertEmbedding
+from travelline.backend.rag.sbertembedding import SBertEmbedding
 
 import argparse
 import sys
