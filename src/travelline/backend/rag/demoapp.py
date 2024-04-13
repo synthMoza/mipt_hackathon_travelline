@@ -15,10 +15,10 @@ def parse_args():
 def main():
     args = parse_args()
     embedding = SBertEmbedding()
-    
+
     with open(args.document, 'r', encoding = 'utf-8') as file:
         doc_data = file.read()
-    
+
     q = embedding.get(doc_data)
     print(f'Embedding: {q}')
 
