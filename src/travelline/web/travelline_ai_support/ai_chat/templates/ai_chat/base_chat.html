@@ -21,6 +21,13 @@
         overflow-y: hidden;
         overflow-x: hidden;
       }
+
+      .workzone {
+        background: #ECF1F6;
+        height: 91vh;
+        border-radius: 10px;
+      }
+
       .chat-messages:focus,
       .chat-messages:hover {
         overflow-y: scroll;
@@ -33,9 +40,29 @@
         display: flex;
         flex-shrink: 0;
       }
-      .chat-message-wrap {
+      .chat-message-wrap-left,
+      .chat-message-wrap-right {
         overflow-wrap: anywhere;
+        white-space: pre;
       }
+
+      .chat-message-wrap-left {
+        background: #FFFFFF;
+      }
+
+      .chat-message-wrap-right {
+        background: #FFFFFF;
+      }
+
+      .chat-message-nickname-left {
+        color: #F02759;
+      }
+
+      .chat-message-nickname-right {
+        color: #227ADB;
+        text-align: right;
+      }
+
       .chat-message-left {
         margin-right: auto;
       }
@@ -60,8 +87,12 @@
       }
       .input-group {
         overflow-wrap: anywhere;
-        height: 10vh;
         min-height: 50px;
+        max-height: 10vh;
+        display: flex;
+        flex-direction: row;
+        position: sticky;
+        top: 0;
       }
 
       textarea {
@@ -71,11 +102,38 @@
       .text-center {
         text-align: center
       }
+
+      .btn-primary {
+        width: 100px;
+        height: 70px;
+        border: none;
+        outline: none !important;
+        background-color: #227ADB;
+      }
+
+      .btn-primary:hover {
+        background-color: #F02759;
+        outline: none !important;
+      }
+
+      .btn-primary:active, .btn-primary:focus {
+        outline: none !important;
+      }
+
+      .text-form {
+        border: none;
+        outline: none !important;
+      }
+
+      .disabled-div {
+        pointer-events: none;
+        opacity: 0.4;
+      }
     </style>
   </head>
   <body>
     <main class="content">
-      <div class="container p-0">
+      <div class="container p-0 workzone">
         <div>
           <div class="row g-0">
             <div class="col-12 col-lg-7 col-xl-12">
@@ -84,10 +142,10 @@
                 </div>
               </div>
               <div class="flex-grow-0 py-3 px-4 border-top">
-                <div class="input-group">
-                  <textarea
+                <div class="input-group" id="input-group">
+                  <textarea 
                     type="text"
-                    class="form-control"
+                    class="form-control text-form"
                     id="input"
                     placeholder="Type your question"
                     style="overflow:hidden"
@@ -112,7 +170,9 @@
       document.querySelector("#submit").onclick = function (e) {
         const messageInputDom = document.querySelector("#input");
         const message = messageInputDom.value;
-        if (message != "") {
+        if (message.replace(/\s+/g, '') != "") {
+          const inputDom = document.querySelector("#input-group");
+          inputDom.className += " disabled-div";
           chatSocket.send(
             JSON.stringify({
               message: message,
@@ -133,8 +193,11 @@
       );
 
       chatSocket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-
+        const data = JSON.parse(e.data);  
+        if (data.from_ai) {
+            const inputDom = document.querySelector("#input-group");
+            inputDom.className = inputDom.className.replace(" disabled-div", "");
+        }
         let g = document.createElement('div');
         if (data.from_ai)
             g.className = "chat-message-left pb-4";
@@ -171,12 +234,15 @@
         g.appendChild(avatar);
 
         let message = document.createElement('span');
-        if (data.from_ai)
-          message.className = "flex-shrink-1 bg-info rounded py-2 px-3 mr-3 chat-message-wrap";
-        else
-          message.className = "flex-shrink-1 bg-light rounded py-2 px-3 mr-3 chat-message-wrap";
         let message_name = document.createElement('div');
-        message_name.className = "font-weight-bold mb-1";
+        if (data.from_ai) {
+          message.className = "flex-shrink-1 rounded py-2 px-3 mr-3 chat-message-wrap-left";
+          message_name.className = "font-weight-bold mb-1 chat-message-nickname-left";
+        }
+        else {
+          message.className = "flex-shrink-1 rounded py-2 px-3 mr-3 chat-message-wrap-right";
+          message_name.className = "font-weight-bold mb-1 chat-message-nickname-right";
+        }
         let message_name_text = document.createTextNode(data.username);
         message_name.appendChild(message_name_text);
         let message_text = document.createTextNode(data.message);

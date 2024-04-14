@@ -47,6 +47,9 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         username = event["username"]
         from_ai = event["from_ai"]
         # send message and username of sender to websocket
+        if username == "":
+            username = "Guest"
+
         await self.send(
             text_data=json.dumps(
                 {
@@ -57,7 +60,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             )
         )
         if not from_ai:
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(2.5)
             await self.send(
                 text_data=json.dumps(
                     {
