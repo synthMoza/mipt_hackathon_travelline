@@ -16,7 +16,10 @@ from travelline.backend.rag.sbertembedding import SBertEmbedding
 from pathlib import Path
 from typing import List, Tuple, Dict
 
-EMBEDDING_DIR = "embeddings"
+
+repo_root = Path(__file__).parent.parent.parent.parent.parent
+
+EMBEDDING_DIR = repo_root / "src" / "travelline" / "backend" / "database" / "embeddings"
 NUMBER_OF_SIMILAR_FILES = 5
 
 

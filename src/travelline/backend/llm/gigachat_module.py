@@ -1,4 +1,4 @@
-from deepthought import AbstractDeepThought, AbstractDetailizer
+from .deepthought import AbstractDeepThought, AbstractDetailizer
 from langchain.chat_models.gigachat import GigaChat
 from langchain.prompts import load_prompt
 

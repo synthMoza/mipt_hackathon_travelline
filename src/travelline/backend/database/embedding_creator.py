@@ -5,7 +5,7 @@
 
 """
 
-from travelline.backend.rag.embedding import SBertEmbedding
+from travelline.backend.rag.sbertembedding import SBertEmbedding
 from pathlib import Path
 import os
 import torch
