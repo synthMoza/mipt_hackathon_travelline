@@ -1,9 +1,14 @@
 import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
+from travelline.backend.llm.demoapp import parse_args
+from travelline.backend.llm.gigachat_module import GigaDetailizer
 from travelline.backend.rag.sbertembedding import SBertEmbedding
-from travelline.backend.rag.demoapp import parse_args as parse_embedding_args
+import torch
 
+args = parse_args()
+embedding_creator = SBertEmbedding()
+deep_detailizer = GigaDetailizer(args.credentials, args.detailizer_config)
 
 class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -49,8 +54,8 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         username = event["username"]
         from_ai = event["from_ai"]
 
-        args = parse_embedding_args()
-        embedding = SBertEmbedding()
+        real_question = deep_detailizer.detailize(message)
+        real_question_embedding = torch.nn.functional.normalize(embedding_creator.get(real_question))
         import code; code.interact(local={**locals(), **globals()})
 
         # send message and username of sender to websocket

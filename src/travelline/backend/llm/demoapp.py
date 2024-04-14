@@ -1,6 +1,6 @@
 import argparse
 import sys
-from gigachat_module import GigaThought, GigaDetailizer
+from travelline.backend.llm.gigachat_module import GigaThought, GigaDetailizer
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Demoapp for GigaThought class usage")
