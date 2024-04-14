@@ -5,10 +5,14 @@ channels==4.1.0
 transformers==4.39.3
 torch==2.2.2
 langchain==0.1.16
+gigachat==0.1.22
+scikit-learn==1.4.2
+numpy==1.26.4
 ## The following requirements were added by pip freeze:
 aiohttp==3.9.4
 aiosignal==1.3.1
 annotated-types==0.6.0
+anyio==4.3.0
 asgiref==3.8.1
 astroid==3.1.0
 attrs==23.2.0
@@ -25,12 +29,16 @@ filelock==3.13.4
 frozenlist==1.4.1
 fsspec==2024.3.1
 greenlet==3.0.3
+h11==0.14.0
+httpcore==1.0.5
+httpx==0.27.0
 huggingface-hub==0.22.2
 hyperlink==21.0.0
 idna==3.7
 incremental==22.10.0
 isort==5.13.2
 Jinja2==3.1.3
+joblib==1.4.0
 jsonpatch==1.33
 jsonpointer==2.4
 langchain-community==0.0.32
@@ -44,7 +52,6 @@ mpmath==1.3.0
 multidict==6.0.5
 mypy-extensions==1.0.0
 networkx==3.3
-numpy==1.26.4
 nvidia-cublas-cu12==12.1.3.1
 nvidia-cuda-cupti-cu12==12.1.105
 nvidia-cuda-nvrtc-cu12==12.1.105
@@ -70,13 +77,16 @@ PyYAML==6.0.1
 regex==2023.12.25
 requests==2.31.0
 safetensors==0.4.2
+scipy==1.13.0
 service-identity==24.1.0
 setuptools==69.2.0
 six==1.16.0
+sniffio==1.3.1
 SQLAlchemy==2.0.29
 sqlparse==0.4.4
 sympy==1.12
 tenacity==8.2.3
+threadpoolctl==3.4.0
 tokenizers==0.15.2
 tomlkit==0.12.4
 tqdm==4.66.2
@@ -87,4 +97,3 @@ typing_extensions==4.11.0
 urllib3==2.2.1
 yarl==1.9.4
 zope.interface==6.3
-

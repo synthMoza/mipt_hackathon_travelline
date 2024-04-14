@@ -8,7 +8,6 @@ def parse_args():
     parser.add_argument("--credentials", type=str, help="credentials for GigaChat API", required=True)
     parser.add_argument("--thought_config", type=str, help="path to the GigaThought prompt config", required=True)
     parser.add_argument("--detailizer_config", type=str, help="path to the GigaDetailizer prompt config", required=True)
-    parser.add_argument("--document", type=str, help="context document", required=True)
 
     return parser.parse_args(sys.argv[1:])
 
