@@ -96,7 +96,6 @@ tomlkit==0.12.4
 torch==2.2.2
 tqdm==4.66.2
 transformers==4.39.3
--e git+https://github.com/synthMoza/mipt_hackathon_travelline.git@b162565e8ed7330e4fc24f8fd6a1fcf2ab75abb9#egg=travelline
 Twisted==24.3.0
 txaio==23.1.1
 typing-inspect==0.9.0
