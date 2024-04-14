@@ -8,14 +8,11 @@
 import os
 import sys
 
-sys.path.append("../rag")
-
 import numpy as np
 import torch
-import time
 import argparse
 from sklearn.metrics.pairwise import cosine_similarity
-from sbertembedding import SBertEmbedding
+from travelline.backend.rag.sbertembedding import SBertEmbedding
 from pathlib import Path
 from typing import List, Tuple, Dict
 

@@ -10,10 +10,9 @@ pip install pypandoc_binary
 from pathlib import Path
 import os
 import pypandoc
-from pypandoc.pandoc_download import download_pandoc
 
-IN_DIR_FILENAME = "../../docs"
-OUT_DIR_FILENAME = "../../docs_txt"
+IN_DIR_FILENAME = "docs"
+OUT_DIR_FILENAME = "docs_txt"
 
 
 def convert_files_to_txt(in_dir_filename: str, out_dir_filename: str) -> None:

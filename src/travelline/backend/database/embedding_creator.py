@@ -5,19 +5,14 @@
 
 """
 
-import os
-import sys
-
-sys.path.append("../rag")
-
-from sbertembedding import SBertEmbedding
+from travelline.backend.rag.embedding import SBertEmbedding
 from pathlib import Path
 import os
 import torch
 
 
-DOCS_TXT_DIR = "../../docs_txt"
-EMBEDDING_DIR = "./embeddings"
+DOCS_TXT_DIR = "docs_txt"
+EMBEDDING_DIR = "embeddings"
 
 
 def crop_filename(filename):
