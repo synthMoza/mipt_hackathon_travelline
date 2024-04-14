@@ -1,6 +1,8 @@
 import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
+from travelline.backend.rag.sbertembedding import SBertEmbedding
+from travelline.backend.rag.demoapp import parse_args as parse_embedding_args
 
 
 class ChatRoomConsumer(AsyncWebsocketConsumer):
@@ -46,6 +48,11 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         message = event["message"]
         username = event["username"]
         from_ai = event["from_ai"]
+
+        args = parse_embedding_args()
+        embedding = SBertEmbedding()
+        import code; code.interact(local={**locals(), **globals()})
+
         # send message and username of sender to websocket
         if username == "":
             username = "Guest"

@@ -1,4 +1,4 @@
-from embedding import AbstractEmbedding
+from travelline.backend.rag.embedding import AbstractEmbedding
 
 from transformers import AutoTokenizer, AutoModel
 import torch
