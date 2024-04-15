@@ -23,7 +23,7 @@
       }
 
       .workzone {
-        background: #ECF1F6;
+        background-color: #ECF1F6;
         height: 91vh;
         border-radius: 10px;
       }
@@ -43,15 +43,16 @@
       .chat-message-wrap-left,
       .chat-message-wrap-right {
         overflow-wrap: anywhere;
-        white-space: pre;
       }
 
       .chat-message-wrap-left {
         background: #FFFFFF;
+        white-space: pre-wrap;
       }
 
       .chat-message-wrap-right {
         background: #FFFFFF;
+        white-space: pre-wrap;
       }
 
       .chat-message-nickname-left {
@@ -135,7 +136,7 @@
     <main class="content">
       <div class="container p-0 workzone">
         <div>
-          <div class="row g-0">
+          <div class="row g-0 workzone">
             <div class="col-12 col-lg-7 col-xl-12">
               <div class="position-relative">
                 <div class="chat-messages p-4" id="chat-text">
