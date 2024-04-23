@@ -1,6 +1,7 @@
-from .deepthought import AbstractDeepThought, AbstractDetailizer
+from deepthought import AbstractDeepThought, AbstractDetailizer
 from langchain.chat_models.gigachat import GigaChat
 from langchain.prompts import load_prompt
+from typing import Tuple
 
 
 class GigaThought(AbstractDeepThought):
@@ -18,6 +19,8 @@ class GigaDetailizer(AbstractDetailizer):
         self.chat = GigaChat(credentials=credentials, verify_ssl_certs=False)
         self.prompt = load_prompt(config_file_path)
         self.chain = self.prompt | self.chat
-    def detailize(self, question: str) -> str:
-        message = self.chain.invoke({"question": question})
-        return message.content
+    def detailize(self, question: str, chat_history: str) -> Tuple[str, str]:
+        message = self.chain.invoke({"question": question, "chat_history": chat_history})
+        chat_history += f'Пользователь: "{question}"\n'
+        chat_history += f'Система: "{message.content}"\n'
+        return (message.content, chat_history)
