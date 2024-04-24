@@ -10,3 +10,8 @@ class AbstractDetailizer(ABC):
     @abstractmethod
     def detailize(self, question: str) -> str:
         pass
+
+class AbstractActualizer(ABC):
+    @abstractmethod
+    def actualize(self, input_question: str) -> str:
+        pass

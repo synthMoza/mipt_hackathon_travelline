@@ -1,4 +1,4 @@
-from deepthought import AbstractDeepThought, AbstractDetailizer
+from deepthought import AbstractDeepThought, AbstractDetailizer, AbstractActualizer
 from langchain.chat_models.gigachat import GigaChat
 from langchain.prompts import load_prompt
 from typing import Tuple
@@ -12,6 +12,16 @@ class GigaThought(AbstractDeepThought):
 
     def ask(self, input_question: str, document: str) -> str:
         message = self.chain.invoke({"input_question": input_question, "context": document})
+        return message.content
+
+class GigaActualizer(AbstractActualizer):
+    def __init__(self, credentials, config_file_path):
+        self.chat = GigaChat(credentials=credentials, verify_ssl_certs=False)
+        self.prompt = load_prompt(config_file_path)
+        self.chain = self.prompt | self.chat
+
+    def actualize(self, input_question: str) -> str:
+        message = self.chain.invoke({"question": input_question})
         return message.content
     
 class GigaDetailizer(AbstractDetailizer):
