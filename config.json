@@ -1,5 +1,3 @@
 {
-    "credentials": "",
-    "thought_config": "/home/stanislav/mipt/masters/travelline/src/travelline/backend/llm/gigathought.yaml",
-    "detailizer_config": "/home/stanislav/mipt/masters/travelline/src/travelline/backend/llm/gigadetailizer.yaml"
+    "credentials": "ZTEwMTJmYjUtOTZiOS00OThjLTg2NDEtNjUwOWIxNTBjZjRhOjJmZjFjMWQ1LWQ0MjgtNDgwMi05NWQ0LWI2NDRlOTE3NzEzYQ=="
 }
