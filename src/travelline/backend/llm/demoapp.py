@@ -1,7 +1,6 @@
 import argparse
 import sys
 from gigachat_module import GigaThought, GigaDetailizer, GigaActualizer
-from compare import compare_quest
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Demoapp for GigaThought class usage")
@@ -27,13 +26,15 @@ def main():
             doc_data = file.read()
 
         question = input("Ask a question: ")
+
+        answer = int(deep_actualizer.actualize(question))
+        print(f"Actualizer: {answer}")
         
         real_question, chat_history = deep_detailizer.detailize(question, chat_history)
         print(f'Chat history: {chat_history}')
         print(f'Detailized question: {real_question}')
-        answer = int(deep_actualizer.actualize(real_question, doc_data))
 
-        if (answer < 50):
+        if (answer == 0):
             print("Вопрос не относится к теме, попробуйте переформулировать свой вопрос")
         else:
             answer = deep_thought.ask(real_question, doc_data)

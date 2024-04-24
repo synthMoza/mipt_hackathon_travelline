@@ -20,8 +20,8 @@ class GigaActualizer(AbstractActualizer):
         self.prompt = load_prompt(config_file_path)
         self.chain = self.prompt | self.chat
 
-    def actualize(self, input_question: str, document: str) -> str:
-        message = self.chain.invoke({"question": input_question, "document": document})
+    def actualize(self, input_question: str) -> str:
+        message = self.chain.invoke({"question": input_question})
         return message.content
     
 class GigaDetailizer(AbstractDetailizer):

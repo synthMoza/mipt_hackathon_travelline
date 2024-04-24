@@ -13,5 +13,5 @@ class AbstractDetailizer(ABC):
 
 class AbstractActualizer(ABC):
     @abstractmethod
-    def actualize(self, input_question: str, document: str) -> str:
+    def actualize(self, input_question: str) -> str:
         pass
