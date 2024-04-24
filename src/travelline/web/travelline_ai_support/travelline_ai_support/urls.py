@@ -15,7 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
-from ai_chat.views import index
 
-urlpatterns = [path("admin/", admin.site.urls), path("", include("ai_chat.urls"))]
+urlpatterns = [
+    path("admin/", admin.site.urls), 
+    path("", lambda request: redirect('chat/', permanent=True)),
+    path("chat/", include("ai_chat.urls")),
+]
