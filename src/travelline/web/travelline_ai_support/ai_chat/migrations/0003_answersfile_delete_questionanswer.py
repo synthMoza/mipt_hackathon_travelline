@@ -4,22 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('ai_chat', '0002_questionanswer_short_question'),
+        ("ai_chat", "0002_questionanswer_short_question"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AnswersFile',
+            name="AnswersFile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('filename', models.TextField(verbose_name='filename')),
-                ('content', models.TextField(verbose_name='content')),
-                ('addition_date', models.DateTimeField(verbose_name='DateTime')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("filename", models.TextField(verbose_name="filename")),
+                ("content", models.TextField(verbose_name="content")),
+                ("addition_date", models.DateTimeField(verbose_name="DateTime")),
             ],
         ),
         migrations.DeleteModel(
-            name='QuestionAnswer',
+            name="QuestionAnswer",
         ),
     ]

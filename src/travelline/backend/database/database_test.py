@@ -5,8 +5,8 @@ from travelline.backend.database.database_implementation import EmbeddingsDB
 from datetime import datetime
 from typing import Tuple
 
-def get_sample_data() -> Tuple[str, str, str]:
 
+def get_sample_data() -> Tuple[str, str, str]:
     now = datetime.now()
     date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
     doc_name = "#0#_Как гость может изменить бронирование с сайта.txt"
@@ -16,12 +16,13 @@ def get_sample_data() -> Tuple[str, str, str]:
 
     return (doc_name, date_time, plain_text)
 
+
 def main() -> None:
     db = EmbeddingsDB("travelline/backend/database/database.db")
 
     (doc_name, date_time, plain_text) = get_sample_data()
 
-    #API_TEST
+    # API_TEST
 
     db.delete_document(0)
     print(f"Document Exists? : {db.check_if_document_exists(0)}")
