@@ -23,7 +23,7 @@ class AnswersFileForm(ModelForm):
                 'class':"form-control",
                 'id':"InputAnswer", 
                 'placeholder':"Enter content",
-                'rows':"20",
+                'rows':"18",
                 'style':"overflow:hidden",
             }),
             "file": FileInput(attrs={

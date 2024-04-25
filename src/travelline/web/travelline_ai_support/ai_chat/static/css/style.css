@@ -1,0 +1,165 @@
+.header {
+  overflow: hidden;
+  background-color: #f1f1f1;
+  padding: 20px 10px;
+}
+
+/* Стиль ссылок шапки */
+.header a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+/* Стиль ссылки логотипа */
+.header a.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+/* Изменение цвета фона при наведении курсора */
+.header a:hover {
+  background-color: #a2bbd6;
+  color: black;
+}
+
+/* Стиль активной/текущей ссылки */
+.header a.active {
+  background-color: #227ADB;
+  color: white;
+}
+
+/* Сдвигаем секцию со ссылками вправо */
+.header-right {
+  float: right;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  height: 75vh;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.workzone {
+  margin-top: 20px;
+  background-color: #ECF1F6;
+  height: 86vh;
+  border-radius: 10px;
+}
+
+.chat-messages:focus,
+.chat-messages:hover {
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+
+.chat-message-left,
+.chat-message-right {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.chat-message-wrap-left,
+.chat-message-wrap-right {
+  overflow-wrap: anywhere;
+}
+
+.chat-message-wrap-left {
+  background: #FFFFFF;
+  white-space: pre-wrap;
+}
+
+.chat-message-wrap-right {
+  background: #FFFFFF;
+  white-space: pre-wrap;
+}
+
+.chat-message-nickname-left {
+  color: #F02759;
+}
+
+.chat-message-nickname-right {
+  color: #227ADB;
+  text-align: right;
+}
+
+.chat-message-left {
+  margin-right: auto;
+}
+
+.chat-message-right {
+  flex-direction: row-reverse;
+  margin-left: auto;
+}
+
+.py-3 {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+.px-4 {
+  padding-right: 1.5rem !important;
+  padding-left: 1.5rem !important;
+}
+
+.flex-grow-0 {
+  flex-grow: 0 !important;
+}
+
+.border-top {
+  border-top: 1px solid #dee2e6 !important;
+}
+
+.input-group {
+  overflow-wrap: anywhere;
+  min-height: 50px;
+  max-height: 10vh;
+  display: flex;
+  flex-direction: row;
+  position: sticky;
+  top: 0;
+}
+
+textarea {
+  resize: none;
+}
+
+.text-center {
+  text-align: center
+}
+
+.btn-primary {
+  width: 100px;
+  height: 70px;
+  border: none;
+  outline: none !important;
+  background-color: #227ADB;
+}
+
+.btn-primary:hover {
+  background-color: #F02759;
+  outline: none !important;
+}
+
+.btn-primary:active,
+.btn-primary:focus {
+  outline: none !important;
+}
+
+.text-form {
+  border: none;
+  outline: none !important;
+}
+
+.disabled-div {
+  pointer-events: none;
+  opacity: 0.4;
+}
