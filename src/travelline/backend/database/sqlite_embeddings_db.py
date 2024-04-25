@@ -1,4 +1,4 @@
-from travelline.backend.database.abstract_embeddings_db import AbstractEmbeddingsDB
+from travelline.backend.database.embeddings_db import AbstractEmbeddingsDB
 from torch import Tensor
 
 import sqlite3
