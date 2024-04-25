@@ -89,22 +89,22 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
             chat_history: str = ""
 
-            # actualized_answer = int(deep_actualizer.actualize(message))
-            # print("Actualizer response: ", actualized_answer)
+            actualized_answer = int(deep_actualizer.actualize(message))
+            print("Actualizer response: ", actualized_answer)
 
-            # if actualized_answer == 0:
-            #     answer = "Вопрос не относится к теме, попробуйте переформулировать свой вопрос"
-            # else:
-            real_question, chat_history = deep_detailizer.detailize(message, chat_history)
-            searcher.ask_real_question(real_question)
-            similarity_list = searcher.get_full_simularity_list()
-            reduced_similarity_list = searcher.get_reduced_simularity_list(5)
-            print("Full simularity list:")
-            print(similarity_list)
-            print("Reduced simularity list:")
-            print(reduced_similarity_list)
-            best_doc_contents = embeddings_db.get_plain_text(similarity_list[0][0])
-            answer = deep_thought.ask(real_question, best_doc_contents)
+            if actualized_answer == 0:
+                answer = "Вопрос не относится к теме, попробуйте переформулировать свой вопрос"
+            else:
+                real_question, chat_history = deep_detailizer.detailize(message, chat_history)
+                searcher.ask_real_question(real_question)
+                similarity_list = searcher.get_full_simularity_list()
+                reduced_similarity_list = searcher.get_reduced_simularity_list(5)
+                print("Full simularity list:")
+                print(similarity_list)
+                print("Reduced simularity list:")
+                print(reduced_similarity_list)
+                best_doc_contents = embeddings_db.get_plain_text(similarity_list[0][0])
+                answer = deep_thought.ask(real_question, best_doc_contents)
 
             await self.send(
                 text_data=json.dumps(
