@@ -25,6 +25,7 @@ class AnswersFileForm(ModelForm):
             }),
             "file": FileInput(attrs={
                 "type":"file",
-                "name":"file"
+                "name":"file",
+                "accept":".txt,.doc,.docx",
             })
         }
