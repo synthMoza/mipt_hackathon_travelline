@@ -30,3 +30,14 @@ To run chat assistant:
 ```
 python3 src/travelline/web/travelline_ai_support/manage.py
 ```
+
+## Authors
+Students of 1st year Master's degree in MIPT DREC facility
+- Alexey Eganyan (synthMoza)
+- Eugene Zorin (Greezzee)
+- Stanislav Sidelnikov (sin-diesel)
+- Vasilii Zaitsev (ZVasilii)
+- Vladislav Loznovenko (Vlad-creator)
+
+March-April 2024
+
