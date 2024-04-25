@@ -41,8 +41,6 @@ def main() -> None:
         q = torch.nn.functional.normalize(embedding.get(doc_data))
 
         print(f"Created embedding {out_dir_path}/{crop_filename(filename)}.pt")
-        torch.save(q, f"{out_dir_path}/{crop_filename(filename)}.pt")
-
     print("Embedding dumping finished!")
 
 
