@@ -19,7 +19,7 @@ from django.shortcuts import redirect
 from django.urls import path, include
 
 urlpatterns = [
-    path("admin/", admin.site.urls), 
-    path("", lambda request: redirect('chat/', permanent=True)),
+    path("admin/", admin.site.urls),
+    path("", lambda request: redirect("chat/", permanent=True)),
     path("chat/", include("ai_chat.urls")),
 ]

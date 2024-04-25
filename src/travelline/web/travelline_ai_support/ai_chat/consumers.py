@@ -4,16 +4,11 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from travelline.backend.llm.gigachat_module import GigaDetailizer
 from travelline.backend.llm.gigachat_module import GigaActualizer
 from travelline.backend.llm.gigachat_module import GigaThought
-from travelline.backend.rag.sbertembedding import SBertEmbedding
-from travelline.backend.database.query_from_database import load_tensors
-from travelline.backend.database.query_from_database import EMBEDDING_DIR
-from travelline.backend.database.query_from_database import NUMBER_OF_SIMILAR_FILES
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-import torch
+from travelline.backend.database.database_implementation import EmbeddingsDB
+from travelline.backend.database.database_searcher_implementation import DB_Searcher
 import json
-from pathlib import Path
 import os
+from pathlib import Path
 
 repo_root = Path(__file__).parent.parent.parent.parent.parent.parent
 
@@ -23,10 +18,14 @@ thought_config = repo_root / "src" / "travelline" / "backend" / "llm" / "gigatho
 detailizer_config = repo_root / "src" / "travelline" / "backend" / "llm" / "gigadetailizer.yaml"
 actualizer_config = repo_root / "src" / "travelline" / "backend" / "llm" / "gigaactualizer.yaml"
 
-embedding_creator = SBertEmbedding()
 deep_thought = GigaThought(args["credentials"], thought_config)
 deep_detailizer = GigaDetailizer(args["credentials"], detailizer_config)
 deep_actualizer = GigaActualizer(args["credentials"], actualizer_config)
+
+embeddings_db = EmbeddingsDB(repo_root / "data" / "embeddings.db")
+embeddings_db.fill((repo_root / "src" / "travelline" / "backend" / "database" / "docs_txt").glob("**/*"))
+searcher = DB_Searcher(embeddings_db)
+
 
 class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -96,36 +95,16 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             if actualized_answer == 0:
                 answer = "Вопрос не относится к теме, попробуйте переформулировать свой вопрос"
             else:
-
                 real_question, chat_history = deep_detailizer.detailize(message, chat_history)
-                real_question_embedding = torch.nn.functional.normalize(embedding_creator.get(real_question))
-
-                (tensor_list, dict_with_indexes) = load_tensors(EMBEDDING_DIR)
-                tensors = np.vstack(tensor_list)
-                query_similarities = cosine_similarity([real_question_embedding[0]], tensors)[0]
-
-                similarity_list = []
-                for index in range(len(dict_with_indexes)):
-                    similarity_list.append((dict_with_indexes[index], query_similarities[index]))
-
-                similarity_list.sort(key=lambda x: x[1], reverse=True)
-                print(f"Similarity list = {similarity_list}")
-                tmp_num = NUMBER_OF_SIMILAR_FILES
-                print(f"Top {tmp_num} similar files: {[x[0] for x in similarity_list[:tmp_num]]}")
-                print("********************")
-
-                best_number = similarity_list[0]
-
-                docs_path = repo_root / "src" / "travelline" / "backend" / "database" / "docs_txt"
-                best_doc_filename = f"#{best_number[0]}#"
-                for file in os.listdir(docs_path):
-                    if file.startswith(best_doc_filename):
-                        best_file_path = docs_path / file
-                with open(best_file_path) as f:
-                    doc_contents = f.read()
-                best_doc_filename = f"#{best_number}#"
-
-                answer = deep_thought.ask(real_question, doc_contents)
+                searcher.ask_real_question(real_question)
+                similarity_list = searcher.get_full_simularity_list()
+                reduced_similarity_list = searcher.get_reduced_simularity_list(5)
+                print("Full simularity list:")
+                print(similarity_list)
+                print("Reduced simularity list:")
+                print(reduced_similarity_list)
+                best_doc_contents = embeddings_db.get_plain_text(similarity_list[0][0])
+                answer = deep_thought.ask(real_question, best_doc_contents)
 
             await self.send(
                 text_data=json.dumps(
