@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
-
-from travelline.backend.database.embeddings_db import EmbeddingsDB
-
+from travelline.backend.database.database_implementation import EmbeddingsDB
 from datetime import datetime
+from typing import Tuple
 
-def main() -> None:
-    db = EmbeddingsDB("travelline/backend/database/database.db")
+def get_sample_data() -> Tuple[str, str, str]:
 
     now = datetime.now()
     date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
@@ -14,6 +12,13 @@ def main() -> None:
     plain_text = ""
     with open(f"travelline/backend/database/docs_txt/{doc_name}", "r") as f:
         plain_text = f.read()
+
+    return (doc_name, date_time, plain_text)
+
+def main() -> None:
+    db = EmbeddingsDB("travelline/backend/database/database.db")
+
+    (doc_name, date_time, plain_text) = get_sample_data()
 
     #API_TEST
 
@@ -35,6 +40,8 @@ def main() -> None:
     db.update_document(doc_name, date_time, plain_text)
     print()
     print(f"PlainText After Update: {db.get_plain_text(0)[:10]}")
+
+    print(f"GetAllEmbeddings: {db.get_all_embeddings()}")
 
     db.disconnect_db()
 

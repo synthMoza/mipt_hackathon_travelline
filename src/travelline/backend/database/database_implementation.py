@@ -1,6 +1,7 @@
 
 from travelline.backend.rag.sbertembedding import SBertEmbedding
 from pathlib import Path
+from typing import Tuple, List
 
 import sqlite3
 import torch
@@ -27,7 +28,9 @@ class EmbeddingsDB():
 
         tensor = torch.nn.functional.normalize(self.embedding.get(plain_text))
         tensor_blob = pickle.dumps(tensor)
-        id = self._crop_filename(doc_name)
+        id = int(self._crop_filename(doc_name))
+        if self.check_if_document_exists(id):
+            return
         self.cursor.execute("INSERT INTO tensors (id, doc_name, datetime, plain_text, tensor) VALUES (?,?,?,?,?)",
                              (id, doc_name, datetime, plain_text, sqlite3.Binary(tensor_blob),))
         self.connection.commit()
@@ -74,9 +77,20 @@ class EmbeddingsDB():
         self.cursor.execute("SELECT tensor FROM tensors WHERE id=?", (id,))
         row = self.cursor.fetchone()
         return pickle.loads(row[0])
+    
+    def get_embedding(self, id: int) -> torch.Tensor:
+        self.cursor.execute("SELECT tensor FROM tensors WHERE id=?", (id,))
+        row = self.cursor.fetchone()
+        return pickle.loads(row[0])
 
     def disconnect_db(self) -> None:
         self.connection.close()
+
+    def get_all_embeddings(self) -> List[Tuple[int, torch.Tensor]]:
+        self.cursor.execute("SELECT id, tensor FROM tensors")
+        row = self.cursor.fetchall()
+        row = list(map(lambda x : (x[0], pickle.loads(x[1])), row))
+        return row
 
     #private
 
