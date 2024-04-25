@@ -5,7 +5,10 @@ from django.forms import ModelForm, TextInput, Textarea, FileInput, FileField
 class AnswersFileForm(ModelForm):
 
     file = FileField(required=False)
-
+    def __init__(self, *args, **kwargs):
+        super(AnswersFileForm, self).__init__(*args, **kwargs)
+        self.fields['filename'].required = False
+        self.fields['content'].required = False
     class Meta:
         model = AnswersFile
         fields = ["filename", "content", "file"]

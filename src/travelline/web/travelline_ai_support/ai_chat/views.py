@@ -18,6 +18,7 @@ def uploader(request):
         form = AnswersFileForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
+            post.addition_date = datetime.now()
             if 'file' in dict(request.FILES).keys():
                 post.filename = request.FILES['file'].name
                 format = os.path.splitext(post.filename)[-1]
@@ -25,8 +26,11 @@ def uploader(request):
                     post.content = request.FILES['file'].open('r').read()
                 else:
                     post.content = pypandoc.convert_text(request.FILES['file'].open('r').read(), "rst", format[1:])
-            post.addition_date = datetime.now()
-            post.save()
+                post.save()
+            elif post.content != "":
+                if post.filename == "":
+                    post.filename = "File" + str(post.addition_date)
+                post.save()
 
     form = AnswersFileForm()
     context = {
