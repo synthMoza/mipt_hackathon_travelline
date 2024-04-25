@@ -1,6 +1,5 @@
 #! /usr/bin/env python3
 
-
 from travelline.backend.database.database_implementation import EmbeddingsDB
 from travelline.backend.rag.sbertembedding import SBertEmbedding
 from sklearn.metrics.pairwise import cosine_similarity
@@ -31,9 +30,8 @@ class DB_Searcher():
             for id, probability in zip(ids, query_similarities):
                  simularity_list.append((id, probability))
             simularity_list.sort(key=lambda x: x[1], reverse=True)
-
             return simularity_list
-    
+
     def get_reduced_simularity_list(self, N : int) -> List[Tuple[int, float]]:
 
         if (N < 1):
@@ -41,7 +39,7 @@ class DB_Searcher():
              self.close_db()
              exit(-1)
         return self.get_full_simularity_list()[: N]
-    
+
     def close_db(self) -> None:
          self.db.disconnect_db()
 

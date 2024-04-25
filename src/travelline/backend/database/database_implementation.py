@@ -1,6 +1,7 @@
 
 from travelline.backend.rag.sbertembedding import SBertEmbedding
 from pathlib import Path
+from typing import Tuple, List
 
 import sqlite3
 import torch
@@ -85,7 +86,7 @@ class EmbeddingsDB():
     def disconnect_db(self) -> None:
         self.connection.close()
 
-    def get_all_embeddings(self) -> list[tuple[int, torch.Tensor]]:
+    def get_all_embeddings(self) -> List[Tuple[int, torch.Tensor]]:
         self.cursor.execute("SELECT id, tensor FROM tensors")
         row = self.cursor.fetchall()
         row = list(map(lambda x : (x[0], pickle.loads(x[1])), row))
