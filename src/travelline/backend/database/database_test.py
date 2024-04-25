@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 from travelline.backend.database.database_implementation import EmbeddingsDB
 from datetime import datetime
 from typing import Tuple
@@ -35,6 +36,8 @@ def main() -> None:
     print(f"PlainText: {db.get_plain_text(0)[:10]}")
 
     print(f"Embedding: {db.get_embedding(0)}, with the shape of {db.get_embedding(0).shape}")
+
+    db.update_document(doc_name, date_time, plain_text) #deleting old document since this is similar
 
     plain_text = "New Plain Text"
     db.update_document(doc_name, date_time, plain_text)
