@@ -1,4 +1,4 @@
-from deepthought import AbstractDeepThought, AbstractDetailizer, AbstractActualizer
+from travelline.backend.llm.deepthought import AbstractDeepThought, AbstractDetailizer, AbstractActualizer
 from langchain.chat_models.gigachat import GigaChat
 from langchain.prompts import load_prompt
 from typing import Tuple

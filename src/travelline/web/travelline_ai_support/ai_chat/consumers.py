@@ -2,6 +2,7 @@ import json
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from travelline.backend.llm.gigachat_module import GigaDetailizer
+from travelline.backend.llm.gigachat_module import GigaActualizer
 from travelline.backend.llm.gigachat_module import GigaThought
 from travelline.backend.rag.sbertembedding import SBertEmbedding
 from travelline.backend.database.query_from_database import load_tensors
@@ -18,9 +19,14 @@ repo_root = Path(__file__).parent.parent.parent.parent.parent.parent
 
 with open(repo_root / "config.json", "r") as f:
     args = json.load(f)
+thought_config = repo_root / "src" / "travelline" / "backend" / "llm" / "gigathought.yaml"
+detailizer_config = repo_root / "src" / "travelline" / "backend" / "llm" / "gigadetailizer.yaml"
+actualizer_config = repo_root / "src" / "travelline" / "backend" / "llm" / "gigaactualizer.yaml"
+
 embedding_creator = SBertEmbedding()
-deep_thought = GigaThought(args["credentials"], args["thought_config"])
-deep_detailizer = GigaDetailizer(args["credentials"], args["detailizer_config"])
+deep_thought = GigaThought(args["credentials"], thought_config)
+deep_detailizer = GigaDetailizer(args["credentials"], detailizer_config)
+deep_actualizer = GigaActualizer(args["credentials"], actualizer_config)
 
 class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -81,35 +87,46 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         )
         if not from_ai:
             await asyncio.sleep(0.5)
-            real_question = deep_detailizer.detailize(message)
-            real_question_embedding = torch.nn.functional.normalize(embedding_creator.get(real_question))
 
-            (tensor_list, dict_with_indexes) = load_tensors(EMBEDDING_DIR)
-            tensors = np.vstack(tensor_list)
-            query_similarities = cosine_similarity([real_question_embedding[0]], tensors)[0]
+            chat_history: str = ""
 
-            similarity_list = []
-            for index in range(len(dict_with_indexes)):
-                similarity_list.append((dict_with_indexes[index], query_similarities[index]))
+            actualized_answer = int(deep_actualizer.actualize(message))
+            print("Actualizer response: ", actualized_answer)
 
-            similarity_list.sort(key=lambda x: x[1], reverse=True)
-            print(f"Similarity list = {similarity_list}")
-            tmp_num = NUMBER_OF_SIMILAR_FILES
-            print(f"Top {tmp_num} similar files: {[x[0] for x in similarity_list[:tmp_num]]}")
-            print("********************")
+            if actualized_answer == 0:
+                answer = "Вопрос не относится к теме, попробуйте переформулировать свой вопрос"
+            else:
 
-            best_number = similarity_list[0]
+                real_question, chat_history = deep_detailizer.detailize(message, chat_history)
+                real_question_embedding = torch.nn.functional.normalize(embedding_creator.get(real_question))
 
-            docs_path = repo_root / "src" / "travelline" / "backend" / "database" / "docs_txt"
-            best_doc_filename = f"#{best_number[0]}#"
-            for file in os.listdir(docs_path):
-                if file.startswith(best_doc_filename):
-                    best_file_path = docs_path / file
-            with open(best_file_path) as f:
-                doc_contents = f.read()
-            best_doc_filename = f"#{best_number}#"
+                (tensor_list, dict_with_indexes) = load_tensors(EMBEDDING_DIR)
+                tensors = np.vstack(tensor_list)
+                query_similarities = cosine_similarity([real_question_embedding[0]], tensors)[0]
 
-            answer = deep_thought.ask(real_question, doc_contents)
+                similarity_list = []
+                for index in range(len(dict_with_indexes)):
+                    similarity_list.append((dict_with_indexes[index], query_similarities[index]))
+
+                similarity_list.sort(key=lambda x: x[1], reverse=True)
+                print(f"Similarity list = {similarity_list}")
+                tmp_num = NUMBER_OF_SIMILAR_FILES
+                print(f"Top {tmp_num} similar files: {[x[0] for x in similarity_list[:tmp_num]]}")
+                print("********************")
+
+                best_number = similarity_list[0]
+
+                docs_path = repo_root / "src" / "travelline" / "backend" / "database" / "docs_txt"
+                best_doc_filename = f"#{best_number[0]}#"
+                for file in os.listdir(docs_path):
+                    if file.startswith(best_doc_filename):
+                        best_file_path = docs_path / file
+                with open(best_file_path) as f:
+                    doc_contents = f.read()
+                best_doc_filename = f"#{best_number}#"
+
+                answer = deep_thought.ask(real_question, doc_contents)
+
             await self.send(
                 text_data=json.dumps(
                     {
