@@ -39,5 +39,5 @@ Students of 1st year Master's degree in MIPT DREC facility
 - Vasilii Zaitsev (ZVasilii)
 - Vladislav Loznovenko (Vlad-creator)
 
-March-April 2024
+April 2024
 
