@@ -1,11 +1,13 @@
 
 from travelline.backend.rag.sbertembedding import SBertEmbedding
+from sklearn.metrics.pairwise import cosine_similarity
 from pathlib import Path
 from typing import Tuple, List
 
 import sqlite3
 import torch
 import pickle
+import numpy as np
 
 class EmbeddingsDB():
     def __init__(self, db_path : str) -> None:
@@ -38,10 +40,29 @@ class EmbeddingsDB():
     def update_document(self, doc_name : str, datetime : str, plain_text : str) -> None:
 
         tensor : torch.Tensor = torch.nn.functional.normalize(self.embedding.get(plain_text))
+
+        #Remove similar existing documents from DB
+        PROB_THRESHOLD = 0.95
+        id_tensor_pairs = self.get_all_embeddings()
+        ids = [x[0] for x in id_tensor_pairs]
+        tensors = [x[1] for x in id_tensor_pairs]
+        tensors = np.vstack(tensors)
+        query_similarities = cosine_similarity([tensor[0]], tensors)[0]
+
+        simularity_list = []
+        for id, probability in zip(ids, query_similarities):
+            if (probability > PROB_THRESHOLD):
+                print(f"Update document: Deleting existing document #{id}")
+                self.delete_document(id)
+
         tensor_blob = pickle.dumps(tensor)
         id = self._crop_filename(doc_name)
-        self.cursor.execute("UPDATE tensors SET doc_name=?, datetime=?, plain_text=?, tensor=? WHERE id=?",
-                             (doc_name, datetime, plain_text, sqlite3.Binary(tensor_blob), id))
+        if (self.check_if_document_exists(id)):
+            self.cursor.execute("UPDATE tensors SET doc_name=?, datetime=?, plain_text=?, tensor=? WHERE id=?",
+                                (doc_name, datetime, plain_text, sqlite3.Binary(tensor_blob), id))
+        else:
+            self.cursor.execute("INSERT INTO tensors (id, doc_name, datetime, plain_text, tensor) VALUES (?,?,?,?,?)",
+                (id, doc_name, datetime, plain_text, sqlite3.Binary(tensor_blob),))
         self.connection.commit()
 
     def delete_document(self, id : int) -> None:
